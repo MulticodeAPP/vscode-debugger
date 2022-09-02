@@ -2,8 +2,8 @@
 	"publisher": "multicode-app",
 	"name": "multicode-app-vscode-debugger",
 	"displayName": "Multicode.app Debugger",
-	"description": "A powerful & high-speed time-travel debugger",
-	"version": "1.1.0",
+	"description": "A powerful & high-speed time travel debugger",
+	"version": "1.1.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/MulticodeAPP/vscode-debugger.git"

@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.1.1] - 2022-09-02
+
+- Update description
+
 ## [1.1.0] - 2022-09-02
 
 - Add interactive debugger support
