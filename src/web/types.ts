@@ -78,6 +78,7 @@ export type CodePathReference = {
     startColumn: number
     endRow: number
     endColumn: number
+    inline: boolean
 }
 
 type CodeClassDefinition = {
@@ -141,4 +142,15 @@ export type CodeNodeSimple = {
     variables: Array<string>
     identifiers: Array<string>
     miscIdentifiers: Array<string>
+}
+
+export type IDEFrozenData = {
+    code: string
+    entries: Array<IDEFrozenDataEntry>
+}
+
+export type IDEFrozenDataEntry = {
+    offset: number
+    length: number
+    depth: number
 }

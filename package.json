@@ -2,8 +2,8 @@
 	"publisher": "multicode-app",
 	"name": "multicode-app-vscode-debugger",
 	"displayName": "Multicode.app Debugger",
-	"description": "A powerful & high-speed reverse debugger",
-	"version": "1.0.0",
+	"description": "A powerful & high-speed time-travel debugger",
+	"version": "1.1.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/MulticodeAPP/vscode-debugger.git"
@@ -19,10 +19,12 @@
 	"activationEvents": [
 		"onCommand:multicode-app-debugger.debugStart",
 		"onCommand:multicode-app-debugger.debugStartOpenExternal",
+		"onCommand:multicode-app-debugger.debugSync",
 		"onCommand:multicode-app-debugger.debugStepForwards",
 		"onCommand:multicode-app-debugger.debugStepBackwards",
 		"onCommand:multicode-app-debugger.debugJumpToStart",
 		"onCommand:multicode-app-debugger.debugJumpToEnd",
+		"onCommand:multicode-app-debugger.debugFreeze",
 		"onCommand:multicode-app-debugger.debugStop",
 		"onView:multicode-app-debugger.debug",
 		"onView:multicode-app-debugger.insights",
@@ -41,6 +43,10 @@
 				"title": "Multicode.app: Start debugging in Multicode.app"
 			},
 			{
+				"command": "multicode-app-debugger.debugSync",
+				"title": "Multicode.app: Sync debugger"
+			},
+			{
 				"command": "multicode-app-debugger.debugStepForwards",
 				"title": "Multicode.app: Step forwards"
 			},
@@ -55,6 +61,10 @@
 			{
 				"command": "multicode-app-debugger.debugJumpToEnd",
 				"title": "Multicode.app: Jump to end"
+			},
+			{
+				"command": "multicode-app-debugger.debugFreeze",
+				"title": "Multicode.app: Freeze debugger"
 			},
 			{
 				"command": "multicode-app-debugger.debugStop",
@@ -97,7 +107,7 @@
 		"viewsWelcome": [
 			{
 				"view": "multicode-app-debugger.debug",
-				"contents": "In order to use Multicode.app debugging, open a file with a supported programming language and press the button below to start debugging.\nUse the Arrow, Home and End keys to navigate during debugging. To stop debugging, press the Escape key.\n[Debug](command:multicode-app-debugger.debugStart)\nAlternatively, you can open the debugger within Multicode.app instead of Visual Studio Code. Which also supports inspecting specific stack frames and contains a shareable URL.\n[Debug in Multicode.app](command:multicode-app-debugger.debugStartOpenExternal)"
+				"contents": "In order to use Multicode.app debugging, open a file with a supported programming language and press the button below to start debugging.\nUse the Arrow, Home and End keys to navigate during debugging. To freeze debugging, press the Escape key. You can then make edits to your code and press ctrl+Enter to sync the debugger. Otherwise press the Escape key again to stop debugging.\n[Debug](command:multicode-app-debugger.debugStart)\nAlternatively, you can open the debugger within Multicode.app instead of Visual Studio Code. Which also supports inspecting specific stack frames and contains a shareable URL.\n[Debug in Multicode.app](command:multicode-app-debugger.debugStartOpenExternal)"
 			},
 			{
 				"view": "multicode-app-debugger.error",
@@ -109,32 +119,43 @@
 				"key": "ctrl+enter",
 				"mac": "command+enter",
 				"command": "multicode-app-debugger.debugStart",
-				"when": "!multicode-app-debugger.debugging"
+				"when": "!multicode-app-debugger.debugging && !multicode-app-debugger.frozen && !suggestWidgetVisible"
+			},
+			{
+				"key": "ctrl+enter",
+				"mac": "command+enter",
+				"command": "multicode-app-debugger.debugSync",
+				"when": "multicode-app-debugger.debugging && multicode-app-debugger.frozen && !suggestWidgetVisible"
 			},
 			{
 				"key": "right",
 				"command": "multicode-app-debugger.debugStepForwards",
-				"when": "multicode-app-debugger.debugging"
+				"when": "multicode-app-debugger.debugging && !multicode-app-debugger.frozen && !suggestWidgetVisible"
 			},
 			{
 				"key": "left",
 				"command": "multicode-app-debugger.debugStepBackwards",
-				"when": "multicode-app-debugger.debugging"
+				"when": "multicode-app-debugger.debugging && !multicode-app-debugger.frozen && !suggestWidgetVisible"
 			},
 			{
 				"key": "home",
 				"command": "multicode-app-debugger.debugJumpToStart",
-				"when": "multicode-app-debugger.debugging"
+				"when": "multicode-app-debugger.debugging && !multicode-app-debugger.frozen && !suggestWidgetVisible"
 			},
 			{
 				"key": "end",
 				"command": "multicode-app-debugger.debugJumpToEnd",
-				"when": "multicode-app-debugger.debugging"
+				"when": "multicode-app-debugger.debugging && !multicode-app-debugger.frozen && !suggestWidgetVisible"
+			},
+			{
+				"key": "escape",
+				"command": "multicode-app-debugger.debugFreeze",
+				"when": "multicode-app-debugger.debugging && !multicode-app-debugger.frozen && !suggestWidgetVisible"
 			},
 			{
 				"key": "escape",
 				"command": "multicode-app-debugger.debugStop",
-				"when": "multicode-app-debugger.debugging"
+				"when": "multicode-app-debugger.debugging && multicode-app-debugger.frozen && !suggestWidgetVisible"
 			}
 		]
 	},

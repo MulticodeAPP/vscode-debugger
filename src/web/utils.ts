@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { CodeRunOutput, FileContent, Insights, InsightsContainer, Scope } from './types';
+import { CodePathReference, CodeRunOutput, FileContent, Insights, InsightsContainer, Scope } from './types';
 
 export function printToOutput(output: vscode.OutputChannel, header: string, file: FileContent) {
     output.show()
@@ -12,6 +12,20 @@ export function printToOutput(output: vscode.OutputChannel, header: string, file
 
 function fromHex(item: string) {
     return parseInt(item, 16)
+}
+
+export function fixFrozenCodeRunOutput(
+    oldOutput: CodeRunOutput,
+    newOutput: CodeRunOutput
+): CodeRunOutput {
+    if (
+        oldOutput.result !== null
+        && (!newOutput.status.done || (newOutput.result !== null && newOutput.result.errors.content.length > 0))
+    ) {
+        return { ...newOutput, result: { ...oldOutput.result, errors: newOutput.result ? newOutput.result.errors : oldOutput.result.errors } }
+    } else {
+        return newOutput
+    }
 }
 
 export function parseInsights(
@@ -103,4 +117,73 @@ export function parseInsights(
     } else {
         return undefined
     }
+}
+
+export function parseInsightsDepth(
+    output: CodeRunOutput | undefined,
+    pointer: number | undefined,
+    path: CodePathReference
+): number | undefined {
+    // if there are insights
+    if (output && output.result && output.result.insights && pointer !== undefined) {
+        const insights = output.result.insights
+
+        if (insights.error || insights.encoding.length === 0) {
+            return undefined
+        }
+
+        let encodings = insights.encoding.split("|")
+        let depth = -1
+
+        for (let encodingIndex = pointer; encodingIndex >= 0; encodingIndex--) {
+            let encoding = encodings[encodingIndex]
+            let items = encoding.substring(3).split(".")
+            let lastPath = fromHex(items[items.length - 1].substring(0, 3))
+            let lastPathReference = insights.pathReferences[lastPath]
+            if (lastPathReference.startRow === path.startRow && lastPathReference.startColumn === path.startColumn) {
+                depth++
+            }
+        }
+        return depth
+    }
+
+    return undefined
+}
+
+export function searchInsightsForRowColumnDepth(
+    output: CodeRunOutput | undefined,
+    row: number,
+    column: number,
+    depth: number
+): number | undefined {
+    // if there are insights
+    if (output && output.result && output.result.insights) {
+        const insights = output.result.insights
+
+        if (insights.error || insights.encoding.length === 0) {
+            return undefined
+        }
+
+        let currentDepth = 0
+        let lastIndex: number | undefined = undefined
+
+        let encodings = insights.encoding.split("|")
+        for (let index = 0; index < encodings.length; index++) {
+            let encoding = encodings[index]
+            let items = encoding.substring(3).split(".")
+            let lastPath = fromHex(items[items.length - 1].substring(0, 3))
+            let lastPathReference = insights.pathReferences[lastPath]
+            if (lastPathReference.startRow === row && lastPathReference.startColumn === column) {
+                if (currentDepth >= depth) {
+                    return index
+                } else {
+                    currentDepth++
+                    lastIndex = index
+                }
+            }
+        }
+        return lastIndex
+    }
+
+    return undefined
 }

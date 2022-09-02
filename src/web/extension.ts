@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { debugJumpToEnd, debugJumpToStart, debugStart, debugStartOpenExternal, debugStepBackwards, debugStepForwards, debugStop } from './commands';
+import { debugFreeze, debugJumpToEnd, debugJumpToStart, debugOnEdit, debugStart, debugStartOpenExternal, debugStepBackwards, debugStepForwards, debugStop, debugSync } from './commands';
 import { InsightsProvider, StackFramesProvider } from './providers';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -12,11 +12,15 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand('multicode-app-debugger.debugStartOpenExternal', debugStartOpenExternal))
 	context.subscriptions.push(vscode.commands.registerCommand('multicode-app-debugger.debugStart', () => debugStart(context, providers)))
-	context.subscriptions.push(vscode.commands.registerCommand('multicode-app-debugger.debugStop', () => debugStop(context, providers)))
+	context.subscriptions.push(vscode.commands.registerCommand('multicode-app-debugger.debugSync', () => debugSync(context, providers)))
 	context.subscriptions.push(vscode.commands.registerCommand('multicode-app-debugger.debugStepForwards', () => debugStepForwards(context, providers)))
 	context.subscriptions.push(vscode.commands.registerCommand('multicode-app-debugger.debugStepBackwards', () => debugStepBackwards(context, providers)))
 	context.subscriptions.push(vscode.commands.registerCommand('multicode-app-debugger.debugJumpToStart', () => debugJumpToStart(context, providers)))
 	context.subscriptions.push(vscode.commands.registerCommand('multicode-app-debugger.debugJumpToEnd', () => debugJumpToEnd(context, providers)))
+	context.subscriptions.push(vscode.commands.registerCommand('multicode-app-debugger.debugFreeze', () => debugFreeze(context, providers)))
+	context.subscriptions.push(vscode.commands.registerCommand('multicode-app-debugger.debugStop', () => debugStop(context, providers)))
+
+	vscode.workspace.onDidChangeTextDocument((e) => debugOnEdit(context, providers, e.document.uri, e.contentChanges))
 }
 
 // this method is called when your extension is deactivated

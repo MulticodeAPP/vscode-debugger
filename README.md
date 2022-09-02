@@ -24,4 +24,4 @@ After pressing the `Debug` button, your code will be executed and after a short 
 
 On the left you'll see the `Insights` and `Stack Frames` of your code. The `Insights` contains all variables, functions and classes used within your code. The `Stack Frames` contain both the current and previous lines your code is executing.
 
-You can navigate during your debugging session by pressing the Arrow, Home and End keys. To stop debugging, press the Escape key.
+You can navigate during your debugging session by pressing the Arrow, Home and End keys. To freeze debugging, press the Escape key. You can then make edits to your code and press ctrl+Enter to sync the debugger. Otherwise press the Escape key again to stop debugging.
